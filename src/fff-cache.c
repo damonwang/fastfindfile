@@ -26,7 +26,10 @@ int make_cache(int in_fd, int out_fd, fff_stats_t stats) {
   if (!(buf = malloc(bufsize * sizeof(*buf)))) return ENOMEM;
   terminating_null = buf;
   next_to_read = buf;
-  while((bytes_read = read(in_fd, terminating_null, bufsize - (terminating_null - buf)))) {
+  while((bytes_read = read(in_fd,
+                           terminating_null,
+                           bufsize - (terminating_null - buf) - 1))) {
+    if (-1 == bytes_read) break;
     assert(buf <= terminating_null);
     assert(terminating_null < buf + bufsize);
     assert(next_to_read <= terminating_null);
@@ -45,16 +48,20 @@ int make_cache(int in_fd, int out_fd, fff_stats_t stats) {
       stats->paths += 1;
 
     }
-    bytes_read = terminating_null - next_to_read;
-    assert(bytes_read < bufsize - 2);
-    memcpy(buf, next_to_read, bytes_read);
-    terminating_null = buf + bytes_read;
+    if (terminating_null > next_to_read) {
+      bytes_read = terminating_null - next_to_read;
+      memcpy(buf, next_to_read, bytes_read);
+      terminating_null = buf + bytes_read;
+    } else {
+      terminating_null = buf;
+    }
+    next_to_read = buf;
   }
-  return 0;
+  return -1 == bytes_read ? errno : 0;
 }
 
 int print_stats(fff_stats_t stats) {
-  printf("wrote %u bytes, %d paths", stats->bytes, stats->paths);
+  printf("wrote %u bytes, %d paths\n", stats->bytes, stats->paths);
   return 0;
 }
 

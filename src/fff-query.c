@@ -15,7 +15,7 @@ void search_cache(fff_cache_t cache, char *query, int out_fd) {
   fff_path_t path = NULL;
   char newline[] = "\n";
   const int newline_size = strlen(newline);
-  char *remaining_query = query, *remaining_path = NULL;
+  char *remaining_query = NULL, *remaining_path = NULL;
 
   while(offset < cache->size) {
     path = (fff_path_t) (cache->data + offset);
