@@ -9,6 +9,10 @@ typedef struct fff_path_s {
 /* An fff-cache file is a concatenation of these structs.  The
    intended usage is to stat the file to find its total size, mmap it,
    and then walk through, examining every string. */
+typedef struct fff_cache_s {
+  size_t size;
+  void *data;
+} *fff_cache_t;
 
 void exit_error(const char *msg) {
   perror(msg);

@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -10,12 +9,6 @@
 #include <assert.h>
 #include <sys/mman.h>
 #include "fff-common.h"
-
-typedef struct fff_cache_s {
-  size_t size;
-  void *data;
-} *fff_cache_t;
-
 
 int dump_cache(fff_cache_t cache, int out_fd) {
   size_t offset = 0;
@@ -54,6 +47,7 @@ int main(int argc, char **argv) {
 
   if (!(infname = parse_args(argc, argv))) usage_and_exit(argv[0]);
 
+  /* CR dwang: duplication with main in fff-query.c */
   if(stat(infname, &inf_stat)) exit_error("stat'ing cache file");
   cache.size = inf_stat.st_size;
 
