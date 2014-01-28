@@ -1,3 +1,5 @@
 
-fff-cache fff-dump fff-query:%: %.c fff-common.h
+all: fff-cache fff-dump fff-query
+
+%: %.c fff-common.h
 

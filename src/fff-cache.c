@@ -12,7 +12,6 @@
 typedef struct fff_stats_s {
   size_t bytes;
   size_t paths;
-  time_t start;
 } *fff_stats_t;
 
 int make_cache(int in_fd, int out_fd, fff_stats_t stats) {
@@ -55,10 +54,7 @@ int make_cache(int in_fd, int out_fd, fff_stats_t stats) {
 }
 
 int print_stats(fff_stats_t stats) {
-  time_t now = -1;
-  if (0 > time(&now)) return errno;
-  printf("%u bytes written, %d paths, in %u seconds\n",
-         stats->bytes, stats->paths, now - stats->start);
+  printf("wrote %u bytes, %d paths", stats->bytes, stats->paths);
   return 0;
 }
 
@@ -74,18 +70,11 @@ char* parse_args(int argc, char **argv) {
   return 2 == argc ? argv[1] : NULL;
 }
 
-void exit_error(const char *msg) {
-  perror(msg);
-  exit(1);
-}
-
 int main(int argc, char **argv) {
   char *outfname;
   int out_fd = -1;
   int rv = 0;
-  struct fff_stats_s stats = { 0, 0, 0 };
-
-  if (0 > time(&stats.start)) exit_error("getting start time");
+  struct fff_stats_s stats = { 0, 0 };
 
   if (!(outfname = parse_args(argc, argv))) usage_and_exit(argv[0]);
 
